@@ -1,0 +1,15 @@
+cloud_info
+equipment
+instance
+instance_arch
+instance_to_be_uploaded
+online_user
+pacs_analytics
+patient
+protocol_setup_info
+puru_document
+report
+series
+series_arch
+study
+study_online_info
