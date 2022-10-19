@@ -1,10 +1,11 @@
-﻿# Declare variables
+# Declare variables
 
-$rootPath         = "C:\PuruBackup"
-$backupRootFolder = "mysql"
+$rootPath            = "C:\PuruBackup"
+$backupRootFolder    = "mysql"
 $backupZipRootFolder = "mysql_in_zip"
+
 $configRootFolder = "config"
-$hostIP           = "localhost"
+$hostIP           = "192.168.0.111"
 $port             = "3306"
 $schema_list_file = "schemas.txt"
 
@@ -16,12 +17,11 @@ $date = Get-Date -UFormat "%d-%m-%Y"
 $time = Get-Date -Format "hhmmtt"
 
 $mysqlDumpCommand   = "mysqldump"
-$userArgs           = "-u root"
+$userArgs           = "-u puru1"
 $protocolString     = "--protocol=tcp"
 $hostnamePortString = "--host=" + $hostIP + " --port=" + $port
 $characterSetString = "--default-character-set=utf8"
 $extraArgs          = "--column-statistics=FALSE --skip-triggers"
-
 
 
 
@@ -53,7 +53,7 @@ Add-Content $logFile_finalPath "[$date]: Starting mysqldump"
 $schema_name_list = Get-Content -Path $schemaNameListWithPath
 
 foreach($schema in $schema_name_list) {
-    #Write-Output $schema
+
     $table_names_file_name  = $schema + ".txt"
     $tableNameFileWithPath = Join-Path -Path $configFolder  -ChildPath $table_names_file_name
     $table_name_list = Get-Content -Path $tableNameFileWithPath
@@ -65,17 +65,11 @@ foreach($schema in $schema_name_list) {
         $fileNameArg = "-r " + $fileName
         $fullTableName = "`"" + $schema + "`" `"" + $table_name + "`""
         $finalCommand = $mysqlDumpCommand, $defaultFileArgs, $hostnamePortString, $characterSetString, $protocolString, $fileNameArg, $userArgs, $fullTableName -join ' '
-        #Write-Output $fullTableName
-        #Write-Output $finalCommand
         Add-Content $logFile_finalPath $finalCommand
         Invoke-Expression $finalCommand
     }
 }
 
-$zipFileName = "puru"  + $date + "-" +$time + ".zip"
+$zipFileName = "btct-puru-" + $date + "-" +$time + ".zip"
 $ZipFile_FinalPath = Join-Path -Path $mysqlZipBackupRootPath -ChildPath $zipFileName
-
-
 Compress-Archive -Path $mysqlBackupDateTimePath_finalPath -DestinationPath $ZipFile_FinalPath
-
-
